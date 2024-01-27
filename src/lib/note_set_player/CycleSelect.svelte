@@ -35,12 +35,7 @@
   });
 </script>
 
-<div
-  bind:this={element}
-  class="main"
-  on:blur={() => (playing = false)}
-  on:focus={() => (playing = true)}
->
+<div bind:this={element} class="main">
   <div class="description">
     <h3>Interval</h3>
     <input

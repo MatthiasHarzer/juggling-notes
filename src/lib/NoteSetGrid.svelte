@@ -98,7 +98,7 @@
 
 {#if editMode && availableDefaultNotes.length > 0}
   <div class="available-default-notes">
-    <h3>Available default notes</h3>
+    <h3>Default notes</h3>
     <div class="note-grid">
       {#each availableDefaultNotes as note (note.letter + note.deviation)}
         <div

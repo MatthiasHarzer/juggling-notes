@@ -53,18 +53,18 @@ export class NoteSetManager {
     return this._noteSets;
   }
 
-  async save() {
+  async export() {
     this._localStorageReader.setNoteSets(this.noteSetsAsArray);
   }
 
   async addNoteSet(noteSet: NoteSet) {
     this._noteSets.update((noteSets) => [...noteSets, noteSet]);
-    await this.save();
+    await this.export();
   }
 
   async removeNoteSet(noteSet: NoteSet) {
     this._noteSets.update((noteSets) => noteSets.filter((n) => n !== noteSet));
-    await this.save();
+    await this.export();
   }
 
   getNoteSetByName(name: string): NoteSet | null {

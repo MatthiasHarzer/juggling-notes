@@ -31,7 +31,7 @@
   };
 
   const saveNoteSets = () => {
-    noteSetManager.save();
+    noteSetManager.export();
   };
 
   const toggleEditMode = () => {
