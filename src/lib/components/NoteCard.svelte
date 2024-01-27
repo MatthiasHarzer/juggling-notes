@@ -6,6 +6,7 @@
   export let note: Note;
   export let allowEdit: boolean = false;
   export let edit = false;
+  export let clear: boolean = false;
 
   let el: HTMLElement;
 
@@ -34,7 +35,7 @@
   });
 </script>
 
-<div class="card-container flex-center" bind:this={el}>
+<div class="card-container flex-center" class:clear bind:this={el}>
   {#if !edit}
     <div class="note">
       <span class="letter">{note.letter}</span>
@@ -86,6 +87,13 @@
     color: #333;
     margin: 3px;
     position: relative;
+
+    &.clear {
+      background-color: transparent;
+      color: inherit;
+      border: none;
+      margin: 0;
+    }
   }
 
   .letter {

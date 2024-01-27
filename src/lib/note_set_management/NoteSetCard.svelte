@@ -18,7 +18,7 @@
 
 <style lang="scss">
   .main {
-    border: 3px solid white;
+    border: 3px solid rgba(255, 255, 255, 0.7);
     border-radius: 10px;
     height: 70px;
     width: 200px;

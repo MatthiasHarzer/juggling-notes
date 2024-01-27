@@ -50,5 +50,6 @@ export const DEFAULT_NOTES: Note[] = [
   },
   {
     letter: "B",
+    deviation: "♮",
   },
 ];

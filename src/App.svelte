@@ -113,6 +113,11 @@
           justify-content: flex-end;
           margin-bottom: 1rem;
         }
+        .grid {
+          width: 100%;
+          padding: 0 15px;
+          box-sizing: border-box;
+        }
       }
     }
 
