@@ -91,7 +91,11 @@
     } else if (event.key === "ArrowRight") {
       advanceIndex();
     } else if (event.key === " ") {
-      togglePlaying();
+      if (noteIndex === $notes.length - 1) {
+        reset();
+      } else {
+        togglePlaying();
+      }
     }
   };
 

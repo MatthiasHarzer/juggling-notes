@@ -25,10 +25,13 @@
     applyFormatted();
   }
 
+  const stopPropagation = (e: Event) => {
+    e.stopPropagation();
+  };
   $: if (playing) {
-    document.addEventListener("keydown", (e) => e.stopPropagation());
+    document.addEventListener("keydown", stopPropagation);
   } else {
-    document.removeEventListener("keydown", (e) => e.stopPropagation());
+    document.removeEventListener("keydown", stopPropagation);
   }
 
   const checkClick = (event: MouseEvent) => {
