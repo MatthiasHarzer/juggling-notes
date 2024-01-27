@@ -77,6 +77,8 @@
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (keyTimeouts.has(event.key)) {
       return;
     }
