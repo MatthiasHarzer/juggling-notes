@@ -35,7 +35,7 @@
   });
 </script>
 
-<div class="card-container flex-center" class:clear bind:this={el}>
+<div class="card-container flex-center" class:clear class:edit bind:this={el}>
   {#if !edit}
     <div class="note">
       <span class="letter">{note.letter}</span>
@@ -44,7 +44,7 @@
       {/if}
     </div>
   {:else}
-    <div>
+    <div class="inputs">
       <select bind:value={note.letter}>
         {#each LETTERS as letter}
           <option value={letter}>
@@ -82,10 +82,9 @@
   .card-container {
     background-color: aliceblue;
     border-radius: 0.5rem;
-    width: 5rem;
-    height: 5rem;
+    width: 5em;
+    height: 5em;
     color: #333;
-    margin: 3px;
     position: relative;
 
     &.clear {
@@ -94,10 +93,33 @@
       border: none;
       margin: 0;
     }
+
+    &.edit {
+      align-items: flex-end;
+    }
+  }
+
+  .inputs {
+    margin-bottom: 15px;
+    select {
+      border: none;
+      background-color: transparent;
+      color: inherit;
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 0;
+      margin: 0;
+      text-align: center;
+      border-bottom: 2px solid #333;
+    }
   }
 
   .letter {
-    font-size: 2rem;
+    font-size: 2em;
+    font-weight: bold;
+  }
+  .deviation {
+    font-size: 1.4em;
     font-weight: bold;
   }
 

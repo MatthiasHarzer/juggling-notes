@@ -86,6 +86,10 @@ button.clear {
     color: inherit;
 }
 
+*:focus {
+    outline: none;
+}
+
 /**
 * Simple material button styles
  */

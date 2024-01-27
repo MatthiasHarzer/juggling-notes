@@ -3,6 +3,8 @@
   import { NoteSetManager } from "./store/note_set_manager";
   import NoteSetManagement from "./lib/note_set_management/NoteSetManagement.svelte";
   import type { NoteSet } from "./store/note_set";
+  import NoteSetPlayer from "./lib/note_set_player/NoteSetPlayer.svelte";
+  import { fade } from "svelte/transition";
 
   let editMode = false;
   let selectedNoteSet: NoteSet | null = null;
@@ -35,6 +37,14 @@
   const toggleEditMode = () => {
     editMode = !editMode;
   };
+
+  let playerOpen = false;
+  const openPlayer = () => {
+    playerOpen = true;
+  };
+  const closePlayer = () => {
+    playerOpen = false;
+  };
 </script>
 
 <main>
@@ -49,6 +59,10 @@
   <div class="main-content">
     <div class="note-set-grid">
       <div class="actions">
+        <button class="material text-button" on:click={openPlayer}>
+          <span class="material-symbols-outlined">play_arrow</span>
+          Play
+        </button>
         <button class="material text-button" on:click={randomize}>
           <span class="material-symbols-outlined">casino</span>
           Randomize
@@ -65,7 +79,7 @@
       </div>
       <div class="grid">
         <NoteSetGrid
-          {editMode}
+          bind:editMode
           noteSet={selectedNoteSet}
           on:edited={saveNoteSets}
         />
@@ -74,6 +88,11 @@
   </div>
   <div class="footer"></div>
 </main>
+{#if selectedNoteSet && playerOpen}
+  <div transition:fade={{ duration: 200 }}>
+    <NoteSetPlayer noteSet={selectedNoteSet} on:close={closePlayer} />
+  </div>
+{/if}
 
 <style lang="scss">
   main {
@@ -105,8 +124,10 @@
         width: 100%;
         height: 100%;
         display: flex;
+        padding-top: 30px;
+        box-sizing: border-box;
         flex-direction: column;
-        justify-content: center;
+        //justify-content: center;
         align-items: center;
 
         .actions {
@@ -115,6 +136,7 @@
           justify-content: flex-end;
           margin-bottom: 1rem;
         }
+
         .grid {
           width: 100%;
           padding: 0 15px;

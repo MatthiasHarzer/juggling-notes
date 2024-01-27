@@ -27,6 +27,14 @@
       ) === -1,
   );
 
+  const checkAutoEditMode = () => {
+    editMode = noteSet?.notesAsArray.length === 0;
+  };
+  $: {
+    noteSet;
+    checkAutoEditMode();
+  }
+
   const handleNoteEdited = () => {
     noteSet?.update();
     dispatch("edited");
@@ -115,6 +123,10 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+
+    .note {
+      margin: 3px;
+    }
   }
 
   .new-note {
@@ -140,13 +152,23 @@
       padding-top: 10px;
 
       select {
-        font-weight: 700;
-        font-size: 1.1rem;
+        border: none;
+        //background-color: transparent;
+        color: inherit;
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 0;
+        margin: 0;
+        text-align: center;
+        border-bottom: 2px solid #c7c7c7;
       }
     }
 
     .add-button {
       margin-top: 2px;
+      margin-bottom: 2px;
+      border-radius: 10px;
+      padding: 2px 10px;
     }
   }
 
