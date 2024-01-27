@@ -5,6 +5,7 @@
   import type { NoteSet } from "./store/note_set";
   import NoteSetPlayer from "./lib/note_set_player/NoteSetPlayer.svelte";
   import { fade } from "svelte/transition";
+  import githubLogo from "./assets/github.svg";
 
   let editMode = false;
   let selectedNoteSet: NoteSet | null = null;
@@ -86,7 +87,14 @@
       </div>
     </div>
   </div>
-  <div class="footer"></div>
+  <div class="footer">
+    <div class="github-notice">
+      Check out the code on <a
+        href="https://github.com/MatthiasHarzer/juggling-notes"
+        >GitHub <img src={githubLogo} alt="GitHub Logo" />
+      </a>
+    </div>
+  </div>
 </main>
 {#if selectedNoteSet && playerOpen}
   <div transition:fade={{ duration: 200 }}>
@@ -158,6 +166,29 @@
 
     .material-symbols-outlined {
       margin-right: 0.5rem;
+    }
+  }
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0.5rem;
+    color: var(--text-color);
+
+    .github-notice {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        img {
+          height: 1rem;
+          filter: invert(1);
+        }
+      }
     }
   }
 </style>
