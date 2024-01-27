@@ -92,8 +92,12 @@
   <div class="available-default-notes">
     <h3>Available default notes</h3>
     <div class="note-grid">
-      {#each availableDefaultNotes as note}
-        <div class="clear note" on:click={() => handleAddNote(note)}>
+      {#each availableDefaultNotes as note (note.letter + note.deviation)}
+        <div
+          class="clear note"
+          on:click={() => handleAddNote(note)}
+          animate:flip={{ duration: 200 }}
+        >
           <NoteCard {note} clear={true} />
           <div class="overlay">
             <span class="icon material-symbols-outlined">add</span>

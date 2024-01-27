@@ -9,9 +9,9 @@
 
   const noteSetManager = new NoteSetManager();
   noteSetManager.init().then(() => {
-    let noteSetName = localStorage.getItem("selectedNoteSet");
-    if (noteSetName) {
-      selectedNoteSet = noteSetManager.getNoteSetByName(noteSetName);
+    let noteSetId = localStorage.getItem("selectedNoteSet");
+    if (noteSetId) {
+      selectedNoteSet = noteSetManager.getNoteSetById(noteSetId);
     } else {
       selectedNoteSet = noteSetManager.noteSetsAsArray[0];
     }
@@ -23,7 +23,7 @@
 
   const onNoteSetClicked = ({ detail: noteSet }: CustomEvent<NoteSet>) => {
     selectedNoteSet = noteSet;
-    localStorage.setItem("selectedNoteSet", selectedNoteSet.name);
+    localStorage.setItem("selectedNoteSet", selectedNoteSet.id);
   };
 
   const saveNoteSets = () => {

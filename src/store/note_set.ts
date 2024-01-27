@@ -7,13 +7,14 @@ export class NoteSet {
   constructor(
     _notes: Note[],
     public name: string,
+    public id: string,
   ) {
     this._notes = writable(_notes ?? []);
-    let id = 0;
+    let i = 0;
     this._notes.update((notes) => {
       return notes.map((note) => {
         if (note.id === undefined) {
-          note.id = id++;
+          note.id = i++;
         }
         return note;
       });
@@ -68,6 +69,6 @@ export class NoteSet {
   }
 
   static getDefault(): NoteSet {
-    return new NoteSet(DEFAULT_NOTES, "Default");
+    return new NoteSet(DEFAULT_NOTES, "Default", "default");
   }
 }

@@ -16,7 +16,7 @@ class LocalStorageReader {
     const json = JSON.parse(noteSets);
 
     return json.map((noteSet: any) => {
-      return new NoteSet(noteSet.notes, noteSet.name);
+      return new NoteSet(noteSet.notes, noteSet.name, noteSet.id);
     });
   }
 
@@ -71,10 +71,19 @@ export class NoteSetManager {
     return this.noteSetsAsArray.find((n) => n.name === name) || null;
   }
 
+  getNoteSetById(id: string): NoteSet | null {
+    return this.noteSetsAsArray.find((n) => n.id === id) || null;
+  }
+
   async createNoteSet(name?: string) {
+    const setName = name ?? `Note Set (${this.noteSetsAsArray.length})`;
+
     const noteSet = new NoteSet(
       [],
-      name ?? `Note Set (${this.noteSetsAsArray.length})`,
+      setName,
+      this.getNoteSetByName(setName)
+        ? `${setName} (${this.noteSetsAsArray.length})`.toLowerCase()
+        : setName.toLowerCase(),
     );
     await this.addNoteSet(noteSet);
     return noteSet;
