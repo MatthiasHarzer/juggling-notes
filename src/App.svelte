@@ -12,13 +12,15 @@
     let noteSetId = localStorage.getItem("selectedNoteSet");
     if (noteSetId) {
       selectedNoteSet = noteSetManager.getNoteSetById(noteSetId);
-    } else {
+    }
+    if (!selectedNoteSet) {
       selectedNoteSet = noteSetManager.noteSetsAsArray[0];
     }
   });
 
   const randomize = () => {
     selectedNoteSet?.shuffle();
+    saveNoteSets();
   };
 
   const onNoteSetClicked = ({ detail: noteSet }: CustomEvent<NoteSet>) => {

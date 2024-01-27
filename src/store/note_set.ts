@@ -63,6 +63,7 @@ export class NoteSet {
 
   toJSON() {
     return {
+      id: this.id,
       name: this.name,
       notes: this.notesAsArray,
     };
