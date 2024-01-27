@@ -5,6 +5,7 @@
   import { saveMod } from "../../util";
   import CycleSelect from "./CycleSelect.svelte";
   import JSConfetti from "js-confetti";
+  import { recordFinish } from "../../store/stats";
 
   export let noteSet: NoteSet;
 
@@ -13,7 +14,6 @@
   const dispatch = createEventDispatcher();
 
   let playing = false;
-  let interval: number;
   const jsConfetti = new JSConfetti();
   const keyTimeout = 200;
   const keyTimeouts = new Map<string, number>();
@@ -34,6 +34,7 @@
 
   const finished = () => {
     playing = false;
+    recordFinish(noteSet, duration);
 
     setTimeout(() => {
       if (noteIndex === $notes.length - 1) {
@@ -60,9 +61,6 @@
         continuePlaying();
       }
     }, duration);
-    // } else {
-    //   clearInterval(interval);
-    // }
   };
 
   $: {
@@ -118,7 +116,7 @@
     <span class="material-symbols-outlined">close</span>
     Close
   </button>
-  <NoteCarrousel notes={$notes} bind:index={noteIndex} />
+  <NoteCarrousel bind:index={noteIndex} notes={$notes} />
   <div class="actions">
     {#if noteIndex === $notes.length - 1}
       <button on:click={reset} class="material text-button">

@@ -32,10 +32,14 @@
     }
   };
 
+  const deleteNoteSet = () => {
+    dispatch("delete", noteSet);
+  };
+
   onMount(() => {
-    window.addEventListener("click", checkIfClickedOutside);
+    window.addEventListener("mousedown", checkIfClickedOutside);
     return () => {
-      window.removeEventListener("click", checkIfClickedOutside);
+      window.removeEventListener("mousedown", checkIfClickedOutside);
     };
   });
 </script>
@@ -46,6 +50,11 @@
   on:click={handleClick}
   bind:this={element}
 >
+  {#if editing}
+    <button class="clear delete-button flex-center" on:click={deleteNoteSet}>
+      <span class="material-symbols-outlined">delete</span>
+    </button>
+  {/if}
   {#if editing}
     <input
       type="text"
@@ -61,7 +70,7 @@
     <span class="name">{noteSet.name}</span>
   {/if}
   {#if selected}
-    <button class="material" on:click={toggleEditing}>
+    <button class="material" on:click|stopPropagation={toggleEditing}>
       <span class="material-symbols-outlined">
         {editing ? "done" : "edit"}
       </span>
@@ -81,6 +90,8 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+    position: relative;
 
     &.selected {
       border: 3px solid #6db262;
@@ -104,5 +115,26 @@
     background-color: #232323;
     color: #fff;
     border-radius: 4px 4px 2px 2px;
+  }
+
+  .delete-button {
+    position: absolute;
+    left: -15px;
+    top: -15px;
+    background-color: #d54949;
+    box-shadow: 0 0 3px #000000;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: #e02828;
+      box-shadow: 0 0 10px #d54949;
+    }
+
+    span {
+      font-size: 20px;
+    }
   }
 </style>

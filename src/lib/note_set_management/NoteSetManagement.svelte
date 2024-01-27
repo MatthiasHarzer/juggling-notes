@@ -29,6 +29,16 @@
       currentSetComponent?.toggleEditing();
     }, 100);
   };
+
+  const deleteNoteSet = async (noteSet: NoteSet) => {
+    const index = $noteSets.indexOf(noteSet);
+    await noteSetManager.removeNoteSet(noteSet);
+    if (index > 0) {
+      handleSetClicked($noteSets[index - 1]);
+    } else {
+      handleSetClicked($noteSets[0]);
+    }
+  };
 </script>
 
 <div class="note-sets">
@@ -37,6 +47,7 @@
       <NoteSetCard
         on:click={() => handleSetClicked(noteSet)}
         on:edit={handleSetEdited}
+        on:delete={() => deleteNoteSet(noteSet)}
         {noteSet}
         selected={noteSet === selectedNoteSet}
         bind:this={currentSetComponent}

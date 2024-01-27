@@ -64,6 +64,9 @@ export class NoteSetManager {
 
   async removeNoteSet(noteSet: NoteSet) {
     this._noteSets.update((noteSets) => noteSets.filter((n) => n !== noteSet));
+    if (this.noteSetsAsArray.length === 0) {
+      await this.addNoteSet(NoteSet.getDefault());
+    }
     await this.export();
   }
 
