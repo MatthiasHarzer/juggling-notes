@@ -25,6 +25,12 @@
     applyFormatted();
   }
 
+  $: if (playing) {
+    document.addEventListener("keydown", (e) => e.stopPropagation());
+  } else {
+    document.removeEventListener("keydown", (e) => e.stopPropagation());
+  }
+
   const checkClick = (event: MouseEvent) => {
     playing = event.composedPath().includes(element);
   };
