@@ -34,19 +34,23 @@
     document.removeEventListener("keydown", stopPropagation);
   }
 
-  const checkClick = (event: MouseEvent) => {
+  const checkClick = (event: Event) => {
     playing = event.composedPath().includes(element);
   };
 
   onMount(() => {
     document.addEventListener("click", checkClick);
-    return () => document.removeEventListener("click", checkClick);
+    document.addEventListener("touchstart", checkClick);
+    return () => {
+      document.removeEventListener("click", checkClick);
+      document.removeEventListener("touchstart", checkClick);
+    };
   });
 </script>
 
 <div bind:this={element} class="main">
   <div class="description">
-    <h3>Interval</h3>
+    <h3>Speed</h3>
     <input
       bind:value={durationFormatted}
       max="3000"

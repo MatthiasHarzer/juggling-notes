@@ -7,7 +7,9 @@
   export let index = 0;
   export let animationDuration = 300;
 
-  let noteWidth = 0;
+  const jumpTo = (idx: number) => {
+    index = idx;
+  };
 
   $: {
     const element = document.getElementById(`element-${index}`);
@@ -33,25 +35,27 @@
 </script>
 
 <div class="main">
-  <div class="note-carrousel" bind:clientWidth={noteWidth} {style}>
+  <div class="note-carrousel" {style}>
     <div class="carrousel-disk">
-      <div
-        class="note start-note flex-center"
+      <button
+        class="clear note start-note flex-center"
         id="element--1"
         style="--proximity: {Math.abs(-1 - index) + 1}"
         class:current={-1 === index}
+        on:click={() => jumpTo(-1)}
       >
         START
-      </div>
+      </button>
       {#each notes as note, idx}
-        <div
-          class="note"
+        <button
+          class="clear note"
           class:current={idx === index}
           style="--proximity: {Math.abs(idx - index) + 1}"
           id="element-{idx}"
+          on:click={() => jumpTo(idx)}
         >
           <NoteCard {note} />
-        </div>
+        </button>
       {/each}
     </div>
   </div>
@@ -77,6 +81,7 @@
       display: flex;
       flex-direction: row;
       flex-wrap: nowrap;
+      align-items: center;
       width: fit-content;
       position: relative;
       transition: left var(--animation-duration) ease-in-out;
@@ -86,10 +91,8 @@
       transition: all var(--animation-duration) ease-in-out;
       margin: 0 15px;
       scale: 0.8;
-      //width: var(--size);
-      //height: var(--size);
+      font-size: inherit;
       opacity: calc(1 / var(--proximity) * 1.5);
-      //scroll-margin-left: 20px;
 
       &.current {
         scale: 1;

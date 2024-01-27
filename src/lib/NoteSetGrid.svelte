@@ -187,8 +187,10 @@
       .note {
         border: 1px solid rgba(173, 173, 173, 0.9);
         border-radius: 10px;
-        margin: 0 3px;
+        margin: 3px;
         cursor: pointer;
+
+        user-select: none;
 
         transition: all 0.2s ease-in-out;
         position: relative;
