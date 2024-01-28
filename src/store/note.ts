@@ -1,6 +1,6 @@
 type PRIMITIVE_NOTES = "C" | "D" | "E" | "F" | "G" | "A" | "B";
 
-export let LETTERS = ["A", "B", "C", "D", "E", "F", "G"];
+export let LETTERS = ["C", "D", "E", "F", "G", "A", "B"];
 export let DEVIATIONS = ["", "♮", "♯", "♭"];
 
 export interface Note {
