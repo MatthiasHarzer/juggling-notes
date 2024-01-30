@@ -7,44 +7,27 @@
   export let index = 0;
   export let animationDuration = 300;
 
+  let elementWidth = 1000;
+  $: offsetLeft = elementWidth * index * -1;
+
   const jumpTo = (idx: number) => {
     index = idx;
   };
 
-  $: {
-    const element = document.getElementById(`element-${index}`);
-    element?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "center",
-    });
-  }
-
-  $: style = `--animation-duration: ${animationDuration}ms;`;
-
-  onMount(() => {
-    setTimeout(() => {
-      const element = document.getElementById(`element-${index}`);
-      element?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "center",
-      });
-    }, 200);
-  });
+  $: style = `--animation-duration: ${animationDuration}ms; --note-width: ${elementWidth}px; --offset-left: ${offsetLeft}px;`;
 </script>
 
 <div class="main">
   <div class="note-carrousel" {style}>
     <div class="carrousel-disk">
       <button
-        class="clear note start-note flex-center"
+        class="clear note"
         id="element--1"
         style="--proximity: {Math.abs(-1 - index) + 1}"
         class:current={-1 === index}
         on:click={() => jumpTo(-1)}
       >
-        START
+        <div class="start-note flex-center">START</div>
       </button>
       {#each notes as note, idx}
         <button
@@ -53,6 +36,7 @@
           style="--proximity: {Math.abs(idx - index) + 1}"
           id="element-{idx}"
           on:click={() => jumpTo(idx)}
+          bind:clientWidth={elementWidth}
         >
           <NoteCard {note} />
         </button>
@@ -65,17 +49,17 @@
 <style lang="scss">
   .main {
     width: 100%;
-    //height: 100%;
     position: relative;
   }
   .note-carrousel {
-    position: relative;
     --size: 150px;
     padding: 15px 0;
-    width: 100%;
+    width: 0;
+    margin: 0 auto;
+    height: var(--size);
     font-size: 2rem;
 
-    overflow-x: hidden;
+    overflow-x: visible;
 
     .carrousel-disk {
       display: flex;
@@ -85,25 +69,20 @@
       width: fit-content;
       position: relative;
       transition: left var(--animation-duration) ease-in-out;
+      translate: calc(var(--note-width) * -1 - var(--note-width) / 2 + 8px) 0;
+      left: var(--offset-left);
     }
 
     .note {
       transition: all var(--animation-duration) ease-in-out;
-      margin: 0 15px;
-      scale: 0.8;
+      padding: 0 30px;
+      //scale: calc(1 / var(--proximity) * 1.5);
+      scale: 0.75;
       font-size: inherit;
       opacity: calc(1 / var(--proximity) * 1.5);
 
       &.current {
         scale: 1;
-        margin: 0 15px;
-      }
-
-      &:last-child {
-        margin-right: 100vw;
-      }
-      &:first-child {
-        margin-left: 100vw;
       }
     }
 

@@ -10,6 +10,7 @@
 
   export let noteSet: NoteSet | null;
   export let editMode: boolean = false;
+  export let fontScale: number = 1;
 
   let newNote: Note = {
     letter: "C",
@@ -56,7 +57,7 @@
   };
 </script>
 
-<div class="note-grid">
+<div class="note-grid" style="--font-scale: {fontScale};">
   {#each $notes as note (note.id)}
     <div class="note" animate:flip={{ duration: 200 }}>
       <NoteCard
@@ -101,7 +102,7 @@
     <h3>Default notes</h3>
     <div class="note-grid">
       {#each availableDefaultNotes as note (note.letter + note.deviation)}
-        <div
+        <button
           class="clear note"
           on:click={() => handleAddNote(note)}
           animate:flip={{ duration: 200 }}
@@ -110,7 +111,7 @@
           <div class="overlay">
             <span class="icon material-symbols-outlined">add</span>
           </div>
-        </div>
+        </button>
       {/each}
     </div>
   </div>
@@ -124,6 +125,8 @@
     align-items: center;
     width: 100%;
 
+    font-size: calc(var(--font-scale) * 1rem);
+    //font-size: 2rem;
     .note {
       margin: 3px;
     }
@@ -132,8 +135,9 @@
   .new-note {
     border: 3px solid rgba(173, 173, 173, 0.25);
     border-radius: 0.5rem;
-    width: 5rem;
-    //height: 5rem;
+    width: 5em;
+    aspect-ratio: 1 / 1;
+    //height: 5em;
     margin: 3px;
     transition: border 0.2s ease-in-out;
     display: flex;
@@ -155,12 +159,13 @@
         border: none;
         //background-color: transparent;
         color: inherit;
-        font-size: 1.5rem;
+        font-size: 1.5em;
         font-weight: bold;
         padding: 0;
-        margin: 0;
+        //margin: 0;
         text-align: center;
         border-bottom: 2px solid #c7c7c7;
+        margin: 0 2px;
       }
     }
 
@@ -169,6 +174,8 @@
       margin-bottom: 2px;
       border-radius: 10px;
       padding: 2px 10px;
+      font-size: 1.1em;
+      font-weight: bold;
     }
   }
 
@@ -191,6 +198,7 @@
         cursor: pointer;
 
         user-select: none;
+        aspect-ratio: 1 / 1;
 
         transition: all 0.2s ease-in-out;
         position: relative;

@@ -9,6 +9,7 @@
 
   let editMode = false;
   let selectedNoteSet: NoteSet | null = null;
+  let fontScale = JSON.parse(localStorage.getItem("fontScale") ?? "1.2");
 
   const noteSetManager = new NoteSetManager();
   noteSetManager.init().then(() => {
@@ -46,6 +47,13 @@
   const closePlayer = () => {
     playerOpen = false;
   };
+
+  const modifyFontScale = (delta: number) => {
+    fontScale += delta;
+    fontScale = Math.max(0.5, fontScale);
+    fontScale = Math.min(2.5, fontScale);
+    localStorage.setItem("fontScale", JSON.stringify(fontScale));
+  };
 </script>
 
 <main>
@@ -60,6 +68,15 @@
   <div class="main-content">
     <div class="note-set-grid">
       <div class="actions">
+        <div class="font-scale">
+          <button class="material" on:click={() => modifyFontScale(-0.1)}>
+            <span class="material-symbols-outlined w500">remove</span>
+          </button>
+          <button class="material" on:click={() => modifyFontScale(0.1)}>
+            <span class="material-symbols-outlined w500">add</span>
+          </button>
+          Scale
+        </div>
         <button class="material text-button" on:click={openPlayer}>
           <span class="material-symbols-outlined">play_arrow</span>
           Play
@@ -83,6 +100,7 @@
           bind:editMode
           noteSet={selectedNoteSet}
           on:edited={saveNoteSets}
+          {fontScale}
         />
       </div>
     </div>
@@ -106,6 +124,8 @@
   main {
     height: 100vh;
     width: 100vw;
+    padding: 0 10px;
+    box-sizing: border-box;
     flex-direction: column;
     display: flex;
 
@@ -118,6 +138,23 @@
         font-size: 1.2rem;
         font-weight: 500;
         border-bottom: 1px solid var(--border-color);
+      }
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.7rem;
+
+      .font-scale {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        //gap: 0.5rem;
+        span {
+          //wght: 800;
+        }
       }
     }
 
