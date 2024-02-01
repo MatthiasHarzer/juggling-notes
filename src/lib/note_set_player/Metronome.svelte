@@ -38,8 +38,10 @@
   export const tock = () => {
     cycle++;
 
-    audio.currentTime = 0;
-    !muted && audio.play();
+    if (!muted) {
+      audio.currentTime = 0;
+      audio.play();
+    }
   };
 
   export const reset = () => {
