@@ -20,9 +20,7 @@
   const keyTimeouts = new Map<string, number>();
   let duration = JSON.parse(localStorage.getItem("duration") || "1000");
   let metronome: Metronome;
-  let alive = true;
-  let metronomeTimeout: number;
-  let notesTimeout: number;
+  let cycleInterval: number;
   let showMetronome = JSON.parse(
     localStorage.getItem("showMetronome") || "true",
   );
@@ -39,16 +37,13 @@
 
   $: {
     duration;
-    resetCycle();
+    setCycleInterval();
   }
 
-  const resetCycle = () => {
+  const setCycleInterval = () => {
+    clearInterval(cycleInterval);
     metronome?.reset();
-    clearTimeout(metronomeTimeout);
-    if (notesTimeout) {
-      clearTimeout(notesTimeout);
-      tickCycle();
-    }
+    cycleInterval = setInterval(tickCycle, duration);
   };
 
   const advanceIndex = () => {
@@ -62,10 +57,9 @@
     playing = false;
     recordFinish(noteSet, duration);
     metronome?.stop();
-    clearTimeout(metronomeTimeout);
 
     setTimeout(() => {
-      if (noteIndex === $notes.length - 1) {
+      if (isFinished) {
         jsConfetti.addConfetti({
           confettiNumber: 500,
         });
@@ -78,19 +72,10 @@
   };
 
   const tickCycle = () => {
-    if (!alive) return;
     playTick();
-    if (!isFinished && metronome) {
-      metronomeTimeout = setTimeout(
-        () => {
-          metronome?.tock();
-        },
-        duration / 2 + animationDuration * 0.5,
-      );
+    if (!isFinished) {
+      metronome?.tock();
     }
-    notesTimeout = setTimeout(() => {
-      tickCycle();
-    }, duration);
   };
 
   const playTick = () => {
@@ -142,12 +127,17 @@
     noteSet.shuffle();
   };
 
+  const toggleMetronome = () => {
+    showMetronome = !showMetronome;
+    setCycleInterval();
+  };
+
   onMount(() => {
     window.addEventListener("keydown", handleKeyDown);
-    tickCycle();
+    setCycleInterval();
 
     return () => {
-      alive = false;
+      clearInterval(cycleInterval);
       window.removeEventListener("keydown", handleKeyDown);
     };
   });
@@ -156,7 +146,7 @@
 <div class="main flex-center">
   <button
     class="material text-button toggle-metronome-button"
-    on:click={() => (showMetronome = !showMetronome)}
+    on:click={toggleMetronome}
   >
     <span class="material-symbols-outlined">
       {#if showMetronome}

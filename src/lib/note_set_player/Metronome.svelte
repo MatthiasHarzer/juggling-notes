@@ -4,6 +4,7 @@
   import MetronomeDot from "../../assets/metronome_dot.svg";
   import MetronomeSound from "../../assets/metronome_sound.mp3";
   import { onMount } from "svelte";
+  import { saveMod } from "../../util";
   export let cycleTime: number = 100;
 
   let cycle: number = 0;
@@ -18,6 +19,7 @@
   );
   $: localStorage.setItem("metronome_volume", volume.toString());
 
+  let noAnimation: boolean = false;
   const audio = new Audio(MetronomeSound);
   $: {
     audio.volume = volume;
@@ -31,20 +33,21 @@
     }, 10);
   }
 
+  $: binCycle = saveMod(cycle, 2) === 0;
+
   export const tock = () => {
     cycle++;
 
-    setTimeout(
-      () => {
-        audio.currentTime = 0;
-        !muted && audio.play();
-      },
-      cycleTime / 2 - 50,
-    );
+    audio.currentTime = 0;
+    !muted && audio.play();
   };
 
   export const reset = () => {
-    cycle = 0;
+    noAnimation = true;
+    cycle = -1;
+    setTimeout(() => {
+      noAnimation = false;
+    }, 10);
   };
 
   export const stop = () => {
@@ -97,8 +100,9 @@
       class="tick"
       src={MetronomeTick}
       alt="I"
-      class:tock={cycle % 2 === 0}
-      class:neutral={cycle === -1}
+      class:animation-right={binCycle}
+      class:animation-left={!binCycle}
+      class:no-animation={noAnimation || cycle === -1}
     />
     <img class="dot" src={MetronomeDot} alt="." />
   </div>
@@ -131,18 +135,50 @@
       left: 50%;
       transform: translateX(-50%);
       filter: drop-shadow(0 0 1px rgba(0, 217, 255, 0.49));
+      rotate: 0;
       transform-origin: bottom left;
-      rotate: calc(var(--rotation) * -1);
 
-      transition: rotate var(--animation-time);
-      transition-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
+      --bezier-fade-out: cubic-bezier(0, 0.5, 0.5, 1);
+      --bezier-fade-in: cubic-bezier(0.5, 0, 1, 0.5);
 
-      &.tock {
-        rotate: calc(var(--rotation));
+      &.no-animation {
+        animation: none !important;
       }
 
-      &.neutral {
-        rotate: 0deg;
+      &.animation-right {
+        animation: animate-right var(--animation-time);
+        animation-timing-function: ease-out;
+      }
+
+      &.animation-left {
+        animation: animate-left var(--animation-time);
+        animation-timing-function: ease-out;
+      }
+
+      @keyframes animate-right {
+        0% {
+          rotate: 0;
+        }
+        50% {
+          rotate: calc(var(--rotation));
+          animation-timing-function: ease-in;
+        }
+        100% {
+          rotate: 0;
+        }
+      }
+
+      @keyframes animate-left {
+        0% {
+          rotate: 0;
+        }
+        50% {
+          rotate: calc(var(--rotation) * -1);
+          animation-timing-function: ease-in;
+        }
+        100% {
+          rotate: 0;
+        }
       }
     }
 
@@ -153,7 +189,6 @@
       bottom: 15%;
       left: 50%;
       transform: translateX(-50%);
-      //filter: drop-shadow(0 0 1px rgba(0, 0, 0, 1));
     }
   }
 
