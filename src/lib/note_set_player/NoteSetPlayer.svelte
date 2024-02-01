@@ -135,6 +135,7 @@
   onMount(() => {
     window.addEventListener("keydown", handleKeyDown);
     setCycleInterval();
+    metronome?.tock();
 
     return () => {
       clearInterval(cycleInterval);
