@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Note } from "../../store/note";
-  import { onMount } from "svelte";
   import NoteCard from "../components/NoteCard.svelte";
 
   export let notes: Note[] = [];
@@ -68,7 +67,8 @@
       align-items: center;
       width: fit-content;
       position: relative;
-      transition: left var(--animation-duration) ease-in-out;
+      transition: left var(--animation-duration);
+      transition-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
       translate: calc(var(--note-width) * -1 - var(--note-width) / 2 + 8px) 0;
       left: var(--offset-left);
     }

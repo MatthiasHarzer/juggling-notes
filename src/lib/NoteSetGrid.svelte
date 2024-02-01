@@ -128,7 +128,7 @@
     font-size: calc(var(--font-scale) * 1rem);
     //font-size: 2rem;
     .note {
-      margin: 3px;
+      margin: 0.2em;
     }
   }
 

@@ -105,7 +105,7 @@
       border: none;
       background-color: transparent;
       color: inherit;
-      font-size: 1.5rem;
+      font-size: 1.5em;
       font-weight: bold;
       padding: 0;
       margin: 0;

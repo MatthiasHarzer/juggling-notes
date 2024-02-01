@@ -1,11 +1,12 @@
 <script lang="ts">
   import type { NoteSet } from "../../store/note_set";
   import NoteCarrousel from "./NoteCarrousel.svelte";
-  import { createEventDispatcher, onDestroy, onMount } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { saveMod } from "../../util";
   import CycleSelect from "./CycleSelect.svelte";
   import JSConfetti from "js-confetti";
   import { recordFinish } from "../../store/stats";
+  import Metronome from "./Metronome.svelte";
 
   export let noteSet: NoteSet;
 
@@ -18,12 +19,37 @@
   const keyTimeout = 200;
   const keyTimeouts = new Map<string, number>();
   let duration = JSON.parse(localStorage.getItem("duration") || "1000");
+  let metronome: Metronome;
+  let alive = true;
+  let metronomeTimeout: number;
+  let notesTimeout: number;
+  let showMetronome = JSON.parse(
+    localStorage.getItem("showMetronome") || "true",
+  );
+  $: localStorage.setItem("showMetronome", JSON.stringify(showMetronome));
+
+  $: animationDuration = Math.min(500, Math.max(250, duration / 4));
 
   $: {
     localStorage.setItem("duration", JSON.stringify(duration));
   }
 
   $: notes = noteSet.notes;
+  $: isFinished = noteIndex === $notes.length - 1;
+
+  $: {
+    duration;
+    resetCycle();
+  }
+
+  const resetCycle = () => {
+    metronome?.reset();
+    clearTimeout(metronomeTimeout);
+    if (notesTimeout) {
+      clearTimeout(notesTimeout);
+      tickCycle();
+    }
+  };
 
   const advanceIndex = () => {
     noteIndex = saveMod(noteIndex + 2, $notes.length + 1) - 1;
@@ -35,39 +61,46 @@
   const finished = () => {
     playing = false;
     recordFinish(noteSet, duration);
+    metronome?.stop();
+    clearTimeout(metronomeTimeout);
 
     setTimeout(() => {
       if (noteIndex === $notes.length - 1) {
         jsConfetti.addConfetti({
-          confettiNumber: 250,
+          confettiNumber: 500,
         });
         jsConfetti.addConfetti({
           emojis: ["🎵", "??", "🎶", "🎵", "🎶", "🎵", "🎶"],
-          confettiNumber: 20,
+          confettiNumber: 40,
         });
       }
     }, duration);
   };
 
-  const continuePlaying = () => {
-    if (!playing) return;
-
-    setTimeout(() => {
-      if (!playing) return;
-      advanceIndex();
-      if (noteIndex === $notes.length - 1) {
-        finished();
-      } else {
-        continuePlaying();
-      }
+  const tickCycle = () => {
+    if (!alive) return;
+    playTick();
+    if (!isFinished && metronome) {
+      metronomeTimeout = setTimeout(
+        () => {
+          metronome?.tock();
+        },
+        duration / 2 + animationDuration * 0.5,
+      );
+    }
+    notesTimeout = setTimeout(() => {
+      tickCycle();
     }, duration);
   };
 
-  $: {
-    playing;
-    continuePlaying();
-  }
-
+  const playTick = () => {
+    if (!playing) return;
+    if (noteIndex === $notes.length - 1) {
+      finished();
+    } else {
+      advanceIndex();
+    }
+  };
   const reset = () => {
     noteIndex = -1;
   };
@@ -111,18 +144,43 @@
 
   onMount(() => {
     window.addEventListener("keydown", handleKeyDown);
-  });
-  onDestroy(() => {
-    window.removeEventListener("keydown", handleKeyDown);
+    tickCycle();
+
+    return () => {
+      alive = false;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   });
 </script>
 
 <div class="main flex-center">
+  <button
+    class="material text-button toggle-metronome-button"
+    on:click={() => (showMetronome = !showMetronome)}
+  >
+    <span class="material-symbols-outlined">
+      {#if showMetronome}
+        music_note
+      {:else}
+        music_off
+      {/if}
+    </span>
+    {#if showMetronome}
+      Hide metronome
+    {:else}
+      Show metronome
+    {/if}
+  </button>
   <button class="material text-button close-button" on:click={onClose}>
     <span class="material-symbols-outlined">close</span>
     Close
   </button>
-  <NoteCarrousel bind:index={noteIndex} notes={$notes} />
+  {#if showMetronome}
+    <div class="metronome">
+      <Metronome bind:this={metronome} cycleTime={duration} />
+    </div>
+  {/if}
+  <NoteCarrousel bind:index={noteIndex} notes={$notes} {animationDuration} />
   <div class="actions">
     {#if noteIndex === $notes.length - 1}
       <button on:click={reset} class="material text-button">
@@ -152,11 +210,13 @@
 
 <style lang="scss">
   .main {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+    padding-bottom: 50px;
+    box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(5px);
     overflow: hidden;
@@ -184,8 +244,19 @@
     margin: 25px;
   }
 
+  .toggle-metronome-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 25px;
+  }
+
   .material.text-button {
     font-size: 1.2em;
     font-weight: bold;
+  }
+
+  .metronome {
+    margin-bottom: 50px;
   }
 </style>
