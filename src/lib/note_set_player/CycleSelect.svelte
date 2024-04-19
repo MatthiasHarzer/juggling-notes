@@ -2,6 +2,10 @@
   import { onMount } from "svelte";
 
   export let duration = 1000;
+  export let cycle = 4;
+
+  const availableCycles = Array.from({length: 10}, (_, i) => i + 2);
+
   let playing = false;
   let element: HTMLDivElement;
 
@@ -46,6 +50,10 @@
       document.removeEventListener("touchstart", checkClick);
     };
   });
+
+  const onCycleChange = (e: Event) => {
+    cycle = parseInt((e.target as HTMLSelectElement).value);
+  };
 </script>
 
 <div bind:this={element} class="main">
@@ -58,12 +66,17 @@
       step="50"
       type="range"
     />
+    <select on:change={onCycleChange}>
+      {#each availableCycles as cy}
+        <option value={cy} selected={cy === cycle}>{cy}</option>
+      {/each}
+    </select>
   </div>
   <div class="time-indicator">
     <div
       class="indicator"
       class:no-animation={!playing}
-      style="--animation-duration: {duration}ms"
+      style="--animation-duration: {duration * cycle}ms"
     >
       <div></div>
       <div></div>

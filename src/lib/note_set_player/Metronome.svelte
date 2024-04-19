@@ -3,6 +3,7 @@
   import MetronomeTick from "../../assets/metronome_shaft.svg";
   import MetronomeDot from "../../assets/metronome_dot.svg";
   import MetronomeSound from "../../assets/metronome_sound.mp3";
+  import MetronomeSound2 from "../../assets/metronome_sound_2.mp3";
   import { onMount } from "svelte";
   import { saveMod } from "../../util";
   export let cycleTime: number = 100;
@@ -20,9 +21,10 @@
   $: localStorage.setItem("metronome_volume", volume.toString());
 
   let noAnimation: boolean = false;
-  const audio = new Audio(MetronomeSound);
+  const tickAudio = new Audio(MetronomeSound);
+  const tockAudio = new Audio(MetronomeSound2);
   $: {
-    audio.volume = volume;
+    tickAudio.volume = volume;
   }
 
   $: if (muted) {
@@ -39,10 +41,19 @@
     cycle++;
 
     if (!muted) {
-      audio.currentTime = 0;
-      audio.play();
+        tockAudio.currentTime = 0.03; // quick and easy way to better sync both tracks
+        tockAudio.play();
     }
   };
+
+  export const tick = () => {
+    cycle++;
+
+    if (!muted) {
+        tickAudio.currentTime = 0;
+        tickAudio.play();
+    }
+  }
 
   export const reset = () => {
     noAnimation = true;

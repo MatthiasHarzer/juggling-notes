@@ -18,7 +18,9 @@
   const jsConfetti = new JSConfetti();
   const keyTimeout = 200;
   const keyTimeouts = new Map<string, number>();
+  let tick = 0;
   let duration = JSON.parse(localStorage.getItem("duration") || "1000");
+  let cycle = JSON.parse(localStorage.getItem("cycle") || "4");
   let metronome: Metronome;
   let cycleInterval: number;
   let showMetronome = JSON.parse(
@@ -72,9 +74,16 @@
   };
 
   const tickCycle = () => {
-    playTick();
-    if (!isFinished) {
-      metronome?.tock();
+    tick++;
+
+    if (tick % cycle === 0) {
+      playTick();
+
+      if (!isFinished) {
+        metronome?.tock();
+      }
+    } else if (!isFinished) {
+      metronome?.tick();
     }
   };
 
@@ -168,7 +177,7 @@
   </button>
   {#if showMetronome}
     <div class="metronome">
-      <Metronome bind:this={metronome} cycleTime={duration} />
+      <Metronome bind:this={metronome} cycleTime={duration} numCycles={cycle} />
     </div>
   {/if}
   <NoteCarrousel bind:index={noteIndex} notes={$notes} {animationDuration} />
@@ -195,7 +204,7 @@
     </button>
   </div>
   <div class="cycle-select">
-    <CycleSelect bind:duration />
+    <CycleSelect bind:duration bind:cycle />
   </div>
 </div>
 
